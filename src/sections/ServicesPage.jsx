@@ -1,119 +1,40 @@
-import React, { useState } from 'react';
-import { 
-  ArrowLeft, Globe, Smartphone, Server, Database, Cloud, 
-  Palette, Monitor, ArrowRight, Star 
+import React, { useState, useEffect } from 'react';
+import {
+  ArrowLeft, ArrowRight, Star, Sparkles
 } from 'lucide-react';
 
-const allServicesData = [
-  {
-    id: "web-development",
-    icon: <Globe size={28} color="var(--white)" />,
-    title: "Web Development",
-    desc: "Custom websites that convert visitors into customers with SEO optimization.",
-    bg: "var(--black)",
-    category: "technology"
-  },
-  {
-    id: "mobile-applications",
-    icon: <Smartphone size={28} color="var(--white)" />,
-    title: "Mobile Applications",
-    desc: "Native and cross-platform mobile solutions for iOS and Android with seamless performance.",
-    bg: "var(--black)",
-    category: "technology"
-  },
-  {
-    id: "servers-hosting",
-    icon: <Server size={28} color="var(--white)" />,
-    title: "Servers & Hosting",
-    desc: "Reliable server setup, cloud hosting, and infrastructure management for your business.",
-    bg: "var(--black)",
-    category: "technology"
-  },
-  {
-    id: "professional-email",
-    icon: <Database size={28} color="var(--white)" />,
-    title: "Professional Email",
-    desc: "Branded professional email solutions to enhance your business credibility.",
-    bg: "var(--black)",
-    category: "business"
-  },
-  {
-    id: "domain-registration",
-    icon: <Cloud size={28} color="var(--white)" />,
-    title: "Domain Registration",
-    desc: "Secure your online identity with our hassle-free domain registration services.",
-    bg: "var(--black)",
-    category: "technology"
-  },
-  {
-    id: "marketing",
-    icon: <Palette size={28} color="var(--white)" />,
-    title: "Marketing",
-    desc: "Grow your business with our comprehensive marketing solutions, including digital campaigns and social media management.",
-    bg: "var(--black)",
-    category: "creative"
-  },
-  {
-    id: "business-solution",
-    icon: <Monitor size={28} color="var(--white)" />,
-    title: "Business Solution",
-    desc: "Optimize your operations with our tailored business solutions, including process automation, ERP, and CRM systems.",
-    bg: "var(--black)",
-    category: "business"
-  },
-  {
-    id: "logo-branding",
-    icon: <Palette size={28} color="var(--white)" />,
-    title: "Logo & Branding",
-    desc: "Build a memorable brand identity with our logo design and branding services.",
-    bg: "var(--black)",
-    category: "creative"
-  },
-  {
-    id: "company-incorporation",
-    icon: <Database size={28} color="var(--white)" />,
-    title: "Company Incorporation",
-    desc: "Start your business journey with our company incorporation services, ensuring legal compliance and smooth registration.",
-    bg: "var(--black)",
-    category: "business"
-  },
-  {
-    id: "seo",
-    icon: <Database size={28} color="var(--white)" />,
-    title: "SEO",
-    desc: "Boost your online visibility and rankings with our expert SEO services, ensuring legal compliance and improved search performance.",
-    bg: "var(--black)",
-    category: "technology"
-  },
-  {
-    id: "market-research",
-    icon: <Globe size={28} color="var(--white)" />,
-    title: "Market Research",
-    desc: "Make informed decisions with our market research services, providing actionable insights and data-driven strategies.",
-    bg: "var(--black)",
-    category: "business"
-  },
-  {
-    id: "finance",
-    icon: <Globe size={28} color="var(--white)" />,
-    title: "Finance",
-    desc: "Comprehensive financial services including business loans, funding solutions, and financial consulting to support your growth.",
-    bg: "var(--black)",
-    category: "business"
-  }
-];
-
 export default function ServicesPage({ onBackToHome, onSelectService }) {
-  const [activeFilter, setActiveFilter] = useState('all');
+  const [hoveredService, setHoveredService] = useState(null);
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    fetchServices();
+  }, []);
+
+  const fetchServices = async () => {
+    try {
+      const response = await fetch('http://192.168.0.159:8000/services');
+      if (response.ok) {
+        const data = await response.json();
+        setServices(data);
+      }
+    } catch (error) {
+      console.error('Error fetching services:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div style={{ padding: '120px 0 80px 0', minHeight: '100vh' }}>
       <div className="container">
-        
+
         {/* Back navigation */}
-        <button 
+        <button
           onClick={onBackToHome}
-          className="neo-btn" 
+          className="neo-btn"
           style={{ marginBottom: '40px', padding: '10px 20px', fontSize: '0.95rem' }}
         >
           <ArrowLeft size={18} /> Back to Home
@@ -135,88 +56,80 @@ export default function ServicesPage({ onBackToHome, onSelectService }) {
           </p>
         </div>
 
-        {/* Filter Bar */}
-        <div className="reveal-on-scroll reveal-up" style={{ 
-          display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '48px', 
-          paddingBottom: '24px', borderBottom: '4px solid var(--border)' 
-        }}>
-          {[
-            { id: 'all', label: 'All Services' },
-            { id: 'technology', label: 'Tech & Hosting' },
-            { id: 'business', label: 'Business & Finance' },
-            { id: 'creative', label: 'Branding & Marketing' }
-          ].map(btn => (
-            <button
-              key={btn.id}
-              onClick={() => setActiveFilter(btn.id)}
-              className="neo-btn"
-              style={{
-                backgroundColor: activeFilter === btn.id ? 'var(--black)' : '#FFFFFF',
-                color: activeFilter === btn.id ? '#FFFFFF' : '#000000',
-                padding: '8px 20px',
-                fontSize: '0.95rem'
-              }}
-            >
-              {btn.label}
-            </button>
-          ))}
-        </div>
+        {loading ? (
+          <p style={{ textAlign: 'center', padding: '40px 0' }}>Loading services...</p>
+        ) : services.length === 0 ? (
+          <p style={{ textAlign: 'center', padding: '40px 0' }}>No services available yet.</p>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '32px' }}>
+            {services.map((svc, idx) => {
+              const isHovered = hoveredService === svc.id;
 
-        {/* Grid System */}
-        <div className="grid-3" style={{ marginBottom: '80px' }}>
-          {allServicesData.map((svc, idx) => {
-            const isVisible = activeFilter === 'all' || svc.category === activeFilter;
-            return (
-              <div 
-                key={svc.id} 
-                className={`neo-card neo-card-interactive reveal-on-scroll reveal-up`}
-                style={{ 
-                  padding: '36px 32px', 
-                  backgroundColor: 'var(--bg-card)', 
-                  display: isVisible ? 'flex' : 'none', 
-                  flexDirection: 'column', 
-                  gap: '24px',
-                  transitionDelay: `${(idx % 3) * 0.08}s`
-                }}
-              >
-                {/* Icon Frame */}
-                <div className="neo-border-thick" style={{
-                  width: '56px', height: '56px', borderRadius: '16px', backgroundColor: svc.bg,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center'
-                }}>
-                  {svc.icon}
-                </div>
-
-                {/* Title & Description */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flexGrow: 1 }}>
-                  <h3 style={{ fontSize: '1.5rem', fontWeight: '800' }}>{svc.title}</h3>
-                  <p style={{ color: '#444444', fontSize: '0.95rem', lineHeight: 1.6 }}>{svc.desc}</p>
-                </div>
-
-                {/* Bottom Interactive Button */}
-                <button 
-                  onClick={() => onSelectService(svc.id)}
-                  className="neo-btn" 
-                  style={{ alignSelf: 'flex-start', padding: '8px 16px', fontSize: '0.85rem' }}
+              return (
+                <div
+                  key={svc.id || idx}
+                  onMouseEnter={() => setHoveredService(svc.id)}
+                  onMouseLeave={() => setHoveredService(null)}
+                  className={`neo-card reveal-on-scroll reveal-up delay-${(idx % 4) * 100}`}
+                  style={{
+                    padding: '32px', backgroundColor: 'var(--white)', position: 'relative', overflow: 'hidden',
+                    display: 'flex', flexDirection: 'column', height: '100%', transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
+                    transform: isHovered ? 'translate(-4px, -4px)' : 'none',
+                    boxShadow: isHovered ? '12px 12px 0px var(--black)' : '8px 8px 0px var(--black)'
+                  }}
                 >
-                  Explore More <ArrowRight size={14} />
-                </button>
-              </div>
-            );
-          })}
-        </div>
+                  {isHovered && (
+                    <div style={{ position: 'absolute', top: 0, right: 0, width: '150px', height: '150px', backgroundColor: 'var(--black)', opacity: 0.05, borderRadius: '0 0 0 100%', pointerEvents: 'none' }}></div>
+                  )}
+
+                  <div className="neo-border-thick" style={{
+                    width: '64px', height: '64px', borderRadius: '16px', backgroundColor: 'var(--black)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px', flexShrink: 0
+                  }}>
+                    {svc.icon_url ? (
+                      <img src={svc.icon_url.startsWith('http') ? svc.icon_url : `http://192.168.0.159:8000/${svc.icon_url}`} alt={svc.name} style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+                    ) : (
+                      <Sparkles size={32} color="var(--white)" />
+                    )}
+                  </div>
+
+                  <h3 style={{ fontSize: '1.8rem', marginBottom: '16px', color: 'var(--black)' }}>
+                    {svc.name}
+                  </h3>
+
+                  <p style={{ color: '#555', lineHeight: 1.6, marginBottom: '32px', flexGrow: 1 }}>
+                    {svc.description}
+                  </p>
+
+                  <button
+                    onClick={() => onSelectService(svc.id)}
+                    className="neo-btn"
+                    style={{
+                      alignSelf: 'flex-start', padding: '10px 20px', fontSize: '0.95rem',
+                      backgroundColor: isHovered ? 'var(--black)' : 'var(--white)',
+                      color: isHovered ? 'var(--white)' : 'var(--black)',
+                      borderColor: 'var(--black)', transition: 'all 0.2s'
+                    }}
+                  >
+                    Learn More <ArrowRight size={16} />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Bottom Contact Hook */}
         <div className="neo-card reveal-on-scroll reveal-scale" style={{
           padding: '48px', backgroundColor: 'var(--black)', color: 'var(--white)', display: 'flex',
           flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '24px',
-          borderRadius: 'var(--radius-xl)'
+          borderRadius: 'var(--radius-xl)', marginTop: '80px'
         }}>
           <h2 style={{ fontSize: '2rem', letterSpacing: '-1px', color: 'var(--white)' }}>Need a Bespoke Solution?</h2>
           <p style={{ fontSize: '1.1rem', maxWidth: '600px', fontWeight: '600', color: '#EEEEEE' }}>
             We collaborate with stakeholders to customize architectures, processes, and systems tailored to your exact business specifications.
           </p>
-          <a 
+          <a
             href="#/contact"
             className="neo-btn neo-btn-dark-pill"
           >

@@ -177,7 +177,7 @@ export default function ContactPage({ onBackToHome }) {
         </div>
 
         {/* Form & Map Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '48px', alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '48px', alignItems: 'start' }}>
 
           {/* Left Column (Info & Map) */}
           <div className="reveal-on-scroll reveal-left" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>

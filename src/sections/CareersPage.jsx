@@ -49,36 +49,35 @@ export default function CareersPage({ onBackToHome }) {
     }
   };
 
-  const roles = [
-    {
-      title: "Frontend Developer (React)",
-      type: "Full-Time",
-      location: "Kolkata, India / Remote",
-      icon: <Code size={24} color="var(--black)" />,
-      description: "Join our core engineering team to build high-performance, animated UI interfaces for modern web applications."
-    },
-    {
-      title: "UI/UX Designer",
-      type: "Full-Time",
-      location: "Kolkata, India",
-      icon: <PenTool size={24} color="var(--black)" />,
-      description: "Design brutalist, vibrant, and highly interactive digital experiences for global clients."
-    },
-    {
-      title: "Growth Marketer",
-      type: "Full-Time",
-      location: "Remote",
-      icon: <TrendingUp size={24} color="var(--black)" />,
-      description: "Drive lead generation and oversee SEO operations for our corporate accounts and Naiyo24 Hub properties."
-    },
-    {
-      title: "Flutter Developer",
-      type: "Full-Time",
-      location: "Kolkata, India / Remote",
-      icon: <Smartphone size={24} color="var(--black)" />,
-      description: "Build exceptional, high-performance cross-platform mobile applications for iOS and Android."
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchJobs();
+  }, []);
+
+  const fetchJobs = async () => {
+    try {
+      const response = await fetch('http://192.168.0.159:8000/jobs/');
+      if (response.ok) {
+        const data = await response.json();
+        setJobs(data.filter(j => j.status === 'Open'));
+      }
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  const getJobIcon = (title, category) => {
+    const lowerTitle = title.toLowerCase();
+    if (lowerTitle.includes('design') || lowerTitle.includes('ui')) return <PenTool size={24} color="var(--black)" />;
+    if (lowerTitle.includes('market') || lowerTitle.includes('growth')) return <TrendingUp size={24} color="var(--black)" />;
+    if (lowerTitle.includes('mobile') || lowerTitle.includes('flutter') || lowerTitle.includes('ios')) return <Smartphone size={24} color="var(--black)" />;
+    if (category === 'tech') return <Code size={24} color="var(--black)" />;
+    return <Briefcase size={24} color="var(--black)" />;
+  };
 
   return (
     <div style={{ backgroundColor: '#F8F9FA', minHeight: '100vh', paddingTop: '140px', paddingBottom: '80px', overflowX: 'hidden' }}>
@@ -167,32 +166,38 @@ export default function CareersPage({ onBackToHome }) {
           <h3 className="reveal-on-scroll reveal-up" style={{ fontSize: '2.5rem', fontFamily: 'var(--font-heading)', marginBottom: '32px', textAlign: 'center', textTransform: 'uppercase' }}>Open Positions</h3>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px' }}>
-            {roles.map((role, idx) => (
-              <div key={idx} className={`neo-border career-card-hover reveal-on-scroll reveal-up delay-${(idx % 4 + 1) * 100}`} style={{ padding: '32px', backgroundColor: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <div style={{ padding: '12px', backgroundColor: '#F8F9FA', border: '2px solid var(--border)', borderRadius: '12px', boxShadow: '2px 2px 0px var(--border)' }}>
-                      {role.icon}
+            {loading ? (
+              <p style={{ gridColumn: '1 / -1', textAlign: 'center' }}>Loading positions...</p>
+            ) : jobs.length === 0 ? (
+              <p style={{ gridColumn: '1 / -1', textAlign: 'center' }}>No open positions currently available.</p>
+            ) : (
+              jobs.map((role, idx) => (
+                <div key={idx} className={`neo-border career-card-hover reveal-on-scroll reveal-up delay-${(idx % 4 + 1) * 100}`} style={{ padding: '32px', backgroundColor: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      <div style={{ padding: '12px', backgroundColor: '#F8F9FA', border: '2px solid var(--border)', borderRadius: '12px', boxShadow: '2px 2px 0px var(--border)' }}>
+                        {getJobIcon(role.title, role.category)}
+                      </div>
+                      <h4 style={{ fontSize: '1.4rem', fontFamily: 'var(--font-heading)', margin: 0 }}>{role.title}</h4>
                     </div>
-                    <h4 style={{ fontSize: '1.4rem', fontFamily: 'var(--font-heading)', margin: 0 }}>{role.title}</h4>
                   </div>
+                  <span className="type-pill" style={{ alignSelf: 'flex-start', fontSize: '0.85rem', fontWeight: 'bold', backgroundColor: 'var(--black)', color: 'var(--white)', border: '2px solid var(--border)', padding: '4px 12px', borderRadius: '20px' }}>
+                    {role.employment_type}
+                  </span>
+                  <p style={{ color: '#555', fontSize: '1.05rem', lineHeight: 1.6, flexGrow: 1, whiteSpace: 'pre-wrap' }}>{role.description}</p>
+                  <div style={{ marginTop: '8px', fontSize: '0.95rem', color: 'var(--heading)', fontWeight: '700' }}>
+                    📍 {role.location}
+                  </div>
+                  <button
+                    onClick={() => setSelectedRole(role)}
+                    className="neo-btn"
+                    style={{ alignSelf: 'flex-start', marginTop: '16px', padding: '12px 24px', backgroundColor: 'var(--black)', color: 'var(--white)', border: '4px solid var(--white)' }}
+                  >
+                    Apply Now
+                  </button>
                 </div>
-                <span className="type-pill" style={{ alignSelf: 'flex-start', fontSize: '0.85rem', fontWeight: 'bold', backgroundColor: 'var(--black)', color: 'var(--white)', border: '2px solid var(--border)', padding: '4px 12px', borderRadius: '20px' }}>
-                  {role.type}
-                </span>
-                <p style={{ color: '#555', fontSize: '1.05rem', lineHeight: 1.6, flexGrow: 1 }}>{role.description}</p>
-                <div style={{ marginTop: '8px', fontSize: '0.95rem', color: 'var(--heading)', fontWeight: '700' }}>
-                  📍 {role.location}
-                </div>
-                <button
-                  onClick={() => setSelectedRole(role)}
-                  className="neo-btn"
-                  style={{ alignSelf: 'flex-start', marginTop: '16px', padding: '12px 24px', backgroundColor: 'var(--black)', color: 'var(--white)', border: '4px solid var(--white)' }}
-                >
-                  Apply Now
-                </button>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 
@@ -247,7 +252,7 @@ export default function CareersPage({ onBackToHome }) {
                   <input type="tel" name="phone" className="neo-border-thick" style={{ width: '100%', padding: '12px', borderRadius: '8px', fontSize: '1rem' }} placeholder="+91 00000 00000" />
                 </div>
               </div>
-              {selectedRole.title.includes('Developer') || selectedRole.title.includes('UI/UX') ? (
+              {selectedRole.title.toLowerCase().includes('dev') || selectedRole.title.toLowerCase().includes('ui/ux') ? (
                 <>
                   <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
                     <div style={{ flex: '1 1 200px' }}>
@@ -266,9 +271,13 @@ export default function CareersPage({ onBackToHome }) {
                 </>
               ) : (
                 <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-                  <div style={{ flex: '1 1 200px' }}>
+                  <div style={{ flex: '1 1 100%' }}>
                     <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px' }}>LinkedIn Profile *</label>
                     <input type="url" name="linkedin" required className="neo-border-thick" style={{ width: '100%', padding: '12px', borderRadius: '8px', fontSize: '1rem' }} placeholder="https://linkedin.com/in/..." />
+                  </div>
+                  <div style={{ flex: '1 1 200px' }}>
+                    <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px' }}>GitHub Profile</label>
+                    <input type="url" name="github" className="neo-border-thick" style={{ width: '100%', padding: '12px', borderRadius: '8px', fontSize: '1rem' }} placeholder="https://github.com/..." />
                   </div>
                   <div style={{ flex: '1 1 200px' }}>
                     <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px' }}>Portfolio / Website URL</label>

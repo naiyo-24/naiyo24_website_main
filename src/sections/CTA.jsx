@@ -17,7 +17,7 @@ export default function CTA() {
             Have an idea or a project that needs technical execution? Contact us today for a free strategic consultation session.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '16px' }}>
-            <a href="mailto:naiyooffice@gmail.com" className="neo-btn neo-btn-dark-pill" style={{ fontSize: '1.1rem' }}>
+            <a href="https://wa.me/916289171798" target="_blank" rel="noreferrer" className="neo-btn neo-btn-dark-pill" style={{ fontSize: '1.1rem' }}>
               Book Free Consultation <ArrowRight size={18} />
             </a>
             <a href="#/contact" className="neo-btn" style={{

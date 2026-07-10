@@ -195,7 +195,7 @@ export default function App() {
           />
           <Naiyo24Hub />
           <WhyChoose />
-          <Projects />
+          <Projects onSelectProject={(id) => handleNavigate('project-detail', id)} />
           <Testimonials />
           <CTA />
         </>

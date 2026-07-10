@@ -5,7 +5,7 @@ export default function AboutSection() {
   return (
     <section id="about" style={{ padding: '20px 0 160px 0', backgroundColor: '#F8F9FA', position: 'relative' }}>
       <div className="container">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '48px', alignItems: 'center' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '48px', alignItems: 'center' }}>
           
           {/* Left Column: Short Story summary */}
           <div className="reveal-on-scroll reveal-left" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
