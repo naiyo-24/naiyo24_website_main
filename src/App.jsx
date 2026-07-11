@@ -134,73 +134,39 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    let observer;
-    let mutationObserver;
-    let timeouts = [];
-
-    const startObserver = () => {
-      const observerOptions = {
-        root: null,
-        rootMargin: '0px 0px -80px 0px',
-        threshold: 0.05,
-      };
-
-      observer = new IntersectionObserver((entries, obs) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('revealed');
-            obs.unobserve(entry.target);
+    const handleScrollAndReveal = () => {
+      const revealElements = document.querySelectorAll('.reveal-on-scroll');
+      revealElements.forEach((el) => {
+        if (!el.classList.contains('revealed')) {
+          const rect = el.getBoundingClientRect();
+          // Element is in viewport with a slight buffer (50px) for smooth entry
+          const isVisible = rect.top < (window.innerHeight || document.documentElement.clientHeight) - 30 && 
+                            rect.bottom >= 0;
+          if (isVisible) {
+            el.classList.add('revealed');
           }
-        });
-      }, observerOptions);
-
-      const observeElements = () => {
-        const revealElements = document.querySelectorAll('.reveal-on-scroll');
-        revealElements.forEach((el) => {
-          if (!el.classList.contains('revealed')) {
-            // Check if element is already inside the viewport
-            const rect = el.getBoundingClientRect();
-            const isVisible = rect.top < window.innerHeight && rect.bottom >= 0;
-            if (isVisible) {
-              el.classList.add('revealed');
-            } else {
-              observer.observe(el);
-            }
-          }
-        });
-      };
-
-      // Initial observation
-      observeElements();
-
-      // Setup MutationObserver to watch for any DOM updates (API loaded items, state changes, etc.)
-      mutationObserver = new MutationObserver(() => {
-        observeElements();
+        }
       });
-
-      mutationObserver.observe(document.body, {
-        childList: true,
-        subtree: true,
-      });
-
-      // Fallback timeouts and periodic interval to guarantee re-observation and reveal
-      [100, 300, 800, 1500, 3000].forEach((delay) => {
-        const t = setTimeout(observeElements, delay);
-        timeouts.push(t);
-      });
-
-      const interval = setInterval(observeElements, 500);
-      timeouts.push(interval);
     };
 
-    // Delay the setup of the observers until the layout settles and scroll resets
-    const initTimeout = setTimeout(startObserver, 200);
-    timeouts.push(initTimeout);
+    // Listen on scroll and touch events (crucial for mobile Safari/Chrome)
+    window.addEventListener('scroll', handleScrollAndReveal, { passive: true });
+    window.addEventListener('touchmove', handleScrollAndReveal, { passive: true });
+    
+    // Initial reveal check
+    handleScrollAndReveal();
+
+    // Periodic safety sweep to capture API loaded elements
+    const intervals = [100, 300, 600, 1200, 2000, 3000].map((delay) => 
+      setTimeout(handleScrollAndReveal, delay)
+    );
+    const periodicInterval = setInterval(handleScrollAndReveal, 600);
 
     return () => {
-      if (observer) observer.disconnect();
-      if (mutationObserver) mutationObserver.disconnect();
-      timeouts.forEach(clearTimeout);
+      window.removeEventListener('scroll', handleScrollAndReveal);
+      window.removeEventListener('touchmove', handleScrollAndReveal);
+      intervals.forEach(clearTimeout);
+      clearInterval(periodicInterval);
     };
   }, [currentPage, selectedServiceId]);
 
