@@ -134,51 +134,72 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const observerOptions = {
-      root: null,
-      rootMargin: '0px 0px -80px 0px',
-      threshold: 0.05,
-    };
+    let observer;
+    let mutationObserver;
+    let timeouts = [];
 
-    const observer = new IntersectionObserver((entries, obs) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('revealed');
-          obs.unobserve(entry.target);
-        }
-      });
-    }, observerOptions);
+    const startObserver = () => {
+      const observerOptions = {
+        root: null,
+        rootMargin: '0px 0px -80px 0px',
+        threshold: 0.05,
+      };
 
-    const observeElements = () => {
-      const revealElements = document.querySelectorAll('.reveal-on-scroll');
-      revealElements.forEach((el) => {
-        if (!el.classList.contains('revealed')) {
-          observer.observe(el);
-        }
-      });
-    };
+      observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
 
-    // Initial observation
-    observeElements();
+      const observeElements = () => {
+        const revealElements = document.querySelectorAll('.reveal-on-scroll');
+        revealElements.forEach((el) => {
+          if (!el.classList.contains('revealed')) {
+            // Check if element is already inside the viewport
+            const rect = el.getBoundingClientRect();
+            const isVisible = rect.top < window.innerHeight && rect.bottom >= 0;
+            if (isVisible) {
+              el.classList.add('revealed');
+            } else {
+              observer.observe(el);
+            }
+          }
+        });
+      };
 
-    // Setup MutationObserver to watch for any DOM updates (API loaded items, state changes, etc.)
-    const mutationObserver = new MutationObserver(() => {
+      // Initial observation
       observeElements();
-    });
 
-    mutationObserver.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
+      // Setup MutationObserver to watch for any DOM updates (API loaded items, state changes, etc.)
+      mutationObserver = new MutationObserver(() => {
+        observeElements();
+      });
 
-    // Fallback timeouts to guarantee re-observation after dynamic API responses load
-    const timeouts = [100, 300, 800, 1500, 3000].map((delay) => 
-      setTimeout(observeElements, delay)
-    );
+      mutationObserver.observe(document.body, {
+        childList: true,
+        subtree: true,
+      });
+
+      // Fallback timeouts and periodic interval to guarantee re-observation and reveal
+      [100, 300, 800, 1500, 3000].forEach((delay) => {
+        const t = setTimeout(observeElements, delay);
+        timeouts.push(t);
+      });
+
+      const interval = setInterval(observeElements, 500);
+      timeouts.push(interval);
+    };
+
+    // Delay the setup of the observers until the layout settles and scroll resets
+    const initTimeout = setTimeout(startObserver, 200);
+    timeouts.push(initTimeout);
 
     return () => {
-      observer.disconnect();
-      mutationObserver.disconnect();
+      if (observer) observer.disconnect();
+      if (mutationObserver) mutationObserver.disconnect();
       timeouts.forEach(clearTimeout);
     };
   }, [currentPage, selectedServiceId]);
