@@ -11,7 +11,7 @@ export default function Services({ onViewAllServices, onSelectService }) {
 
   const fetchServices = async () => {
     try {
-      const response = await fetch('http://192.168.0.159:8000/services');
+      const response = await fetch('https://backend.naiyo24.com/services');
       if (response.ok) {
         const data = await response.json();
         setServices(data.slice(0, 6)); // Display max 6 on homepage
@@ -65,7 +65,7 @@ export default function Services({ onViewAllServices, onSelectService }) {
                   display: 'flex', alignItems: 'center', justifyContent: 'center'
                 }}>
                   {svc.icon_url ? (
-                    <img src={svc.icon_url.startsWith('http') ? svc.icon_url : `http://192.168.0.159:8000/${svc.icon_url}`} alt={svc.name} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+                    <img src={svc.icon_url.startsWith('http') ? svc.icon_url : `https://backend.naiyo24.com/${svc.icon_url}`} alt={svc.name} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
                   ) : (
                     <Sparkles size={28} color="var(--white)" />
                   )}

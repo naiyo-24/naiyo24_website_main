@@ -12,7 +12,7 @@ export default function TermsPage({ onBackToHome }) {
 
   const fetchTerms = async () => {
     try {
-      const response = await fetch('http://192.168.0.159:8000/terms');
+      const response = await fetch('https://backend.naiyo24.com/terms');
       if (response.ok) {
         const data = await response.json();
         if (data.length > 0) {
@@ -67,7 +67,7 @@ export default function TermsPage({ onBackToHome }) {
               <p>No terms and conditions have been published yet.</p>
             )}
           </div>
-          
+
         </div>
       </div>
     </div>

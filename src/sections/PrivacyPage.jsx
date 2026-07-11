@@ -12,7 +12,7 @@ export default function PrivacyPage({ onBackToHome }) {
 
   const fetchPrivacy = async () => {
     try {
-      const response = await fetch('http://192.168.0.159:8000/privacy');
+      const response = await fetch('https://backend.naiyo24.com/privacy');
       if (response.ok) {
         const data = await response.json();
         if (data.length > 0) {
@@ -67,7 +67,7 @@ export default function PrivacyPage({ onBackToHome }) {
               <p>No privacy policy has been published yet.</p>
             )}
           </div>
-          
+
         </div>
       </div>
     </div>

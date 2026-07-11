@@ -27,9 +27,9 @@ export default function ProjectsPage({ onNavigate }) {
               fileSrc.toLowerCase().endsWith(ext)
             );
           });
-          
+
           if (images.length === 0) {
-            setPreviews(prev => ({ ...prev, [project.id]: { url: `http://192.168.0.159:8000${gallery[0]}`, isVideo: true } }));
+            setPreviews(prev => ({ ...prev, [project.id]: { url: `https://backend.naiyo24.com${gallery[0]}`, isVideo: true } }));
             return;
           }
 
@@ -44,13 +44,13 @@ export default function ProjectsPage({ onNavigate }) {
                 foundLandscape = true;
                 setPreviews(prev => ({
                   ...prev,
-                  [project.id]: { url: `http://192.168.0.159:8000${fileSrc}`, isVideo: false }
+                  [project.id]: { url: `https://backend.naiyo24.com${fileSrc}`, isVideo: false }
                 }));
               }
               if (loadedCount === images.length && !foundLandscape) {
                 setPreviews(prev => ({
                   ...prev,
-                  [project.id]: { url: `http://192.168.0.159:8000${images[0]}`, isVideo: false }
+                  [project.id]: { url: `https://backend.naiyo24.com${images[0]}`, isVideo: false }
                 }));
               }
             };
@@ -59,11 +59,11 @@ export default function ProjectsPage({ onNavigate }) {
               if (loadedCount === images.length && !foundLandscape) {
                 setPreviews(prev => ({
                   ...prev,
-                  [project.id]: { url: `http://192.168.0.159:8000${images[0]}`, isVideo: false }
+                  [project.id]: { url: `https://backend.naiyo24.com${images[0]}`, isVideo: false }
                 }));
               }
             };
-            img.src = `http://192.168.0.159:8000${fileSrc}`;
+            img.src = `https://backend.naiyo24.com${fileSrc}`;
           });
         }
       } catch (e) {
@@ -74,7 +74,7 @@ export default function ProjectsPage({ onNavigate }) {
 
   const fetchProjects = async () => {
     try {
-      const response = await fetch('http://192.168.0.159:8000/projects');
+      const response = await fetch('https://backend.naiyo24.com/projects');
       if (response.ok) {
         const data = await response.json();
         setProjects(data);

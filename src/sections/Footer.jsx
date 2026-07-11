@@ -11,7 +11,7 @@ export default function Footer({ onNavigate }) {
     if (email) {
       setLoading(true);
       try {
-        const response = await fetch('http://192.168.0.159:8000/newsletter', {
+        const response = await fetch('https://backend.naiyo24.com/newsletter', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

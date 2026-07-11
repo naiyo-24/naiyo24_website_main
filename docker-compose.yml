@@ -1,0 +1,15 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: naiyo24_frontend
+    ports:
+      - "28080:6173"
+    restart: unless-stopped
+    networks:
+      - naiyo_net
+
+networks:
+  naiyo_net:
+    driver: bridge

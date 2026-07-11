@@ -10,7 +10,7 @@ export default function Testimonials() {
 
   const fetchTestimonials = async () => {
     try {
-      const response = await fetch('http://192.168.0.159:8000/testimonials');
+      const response = await fetch('https://backend.naiyo24.com/testimonials');
       if (response.ok) {
         const data = await response.json();
         setTestimonials(data);

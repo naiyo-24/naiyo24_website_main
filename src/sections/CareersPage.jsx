@@ -18,7 +18,7 @@ export default function CareersPage({ onBackToHome }) {
     const formData = new FormData(e.target);
 
     try {
-      const response = await fetch('http://192.168.0.159:8000/apply', {
+      const response = await fetch('https://backend.naiyo24.com/apply', {
         method: 'POST',
         body: formData,
       });
@@ -58,7 +58,7 @@ export default function CareersPage({ onBackToHome }) {
 
   const fetchJobs = async () => {
     try {
-      const response = await fetch('http://192.168.0.159:8000/jobs/');
+      const response = await fetch('https://backend.naiyo24.com/jobs/');
       if (response.ok) {
         const data = await response.json();
         setJobs(data.filter(j => j.status === 'Open'));
