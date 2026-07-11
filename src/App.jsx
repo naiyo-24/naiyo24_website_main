@@ -24,29 +24,29 @@ import CareersPage from './sections/CareersPage';
 import ProjectDetailPage from './sections/ProjectDetailPage';
 import ProjectsPage from './sections/ProjectsPage';
 
-const parseHash = () => {
-  const hash = window.location.hash;
-  if (hash.startsWith('#/services/')) {
-    const id = hash.replace('#/services/', '');
+const parsePath = () => {
+  const path = window.location.pathname;
+  if (path.startsWith('/services/')) {
+    const id = path.replace('/services/', '');
     return { page: 'service-detail', serviceId: id };
-  } else if (hash.startsWith('#/projects/')) {
-    const id = hash.replace('#/projects/', '');
+  } else if (path.startsWith('/projects/')) {
+    const id = path.replace('/projects/', '');
     return { page: 'project-detail', projectId: id };
-  } else if (hash === '#/projects') {
+  } else if (path === '/projects' || path === '/projects/') {
     return { page: 'projects', serviceId: null };
-  } else if (hash === '#/services') {
+  } else if (path === '/services' || path === '/services/') {
     return { page: 'services', serviceId: null };
-  } else if (hash === '#/contact') {
+  } else if (path === '/contact' || path === '/contact/') {
     return { page: 'contact', serviceId: null };
-  } else if (hash === '#/about') {
+  } else if (path === '/about' || path === '/about/') {
     return { page: 'about', serviceId: null };
-  } else if (hash === '#/ceo-story') {
+  } else if (path === '/ceo-story' || path === '/ceo-story/') {
     return { page: 'ceo-story', serviceId: null };
-  } else if (hash === '#/terms') {
+  } else if (path === '/terms' || path === '/terms/') {
     return { page: 'terms', serviceId: null };
-  } else if (hash === '#/privacy') {
+  } else if (path === '/privacy' || path === '/privacy/') {
     return { page: 'privacy', serviceId: null };
-  } else if (hash === '#/careers') {
+  } else if (path === '/careers' || path === '/careers/') {
     return { page: 'careers', serviceId: null };
   } else {
     return { page: 'home', serviceId: null };
@@ -98,27 +98,38 @@ export default function App() {
   const [selectedServiceId, setSelectedServiceId] = useState(null);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
 
+  const handlePathChange = () => {
+    const { page, serviceId, projectId } = parsePath();
+    setCurrentPage(page);
+    setSelectedServiceId(serviceId || null);
+    setSelectedProjectId(projectId || null);
+    
+    // Smooth scroll or snap to top on path change
+    window.scrollTo({ top: 0 });
+  };
+
   useEffect(() => {
-    const handleHashChange = () => {
-      const { page, serviceId, projectId } = parseHash();
-      const hash = window.location.hash;
-      const isHomepageSection = hash && !hash.startsWith('#/');
-      
-      setCurrentPage(page);
-      setSelectedServiceId(serviceId || null);
-      setSelectedProjectId(projectId || null);
-      
-      if (!isHomepageSection) {
-        window.scrollTo({ top: 0 });
+    // Run on initial load
+    handlePathChange();
+
+    const handleGlobalClick = (e) => {
+      const anchor = e.target.closest('a');
+      if (!anchor) return;
+
+      const href = anchor.getAttribute('href');
+      // Intercept clean internal paths (e.g. /about, /services)
+      if (href && href.startsWith('/') && !href.startsWith('//')) {
+        e.preventDefault();
+        window.history.pushState(null, '', href);
+        handlePathChange();
       }
     };
 
-    // Run on initial load
-    handleHashChange();
-
-    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handlePathChange);
+    document.addEventListener('click', handleGlobalClick);
     return () => {
-      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('popstate', handlePathChange);
+      document.removeEventListener('click', handleGlobalClick);
     };
   }, []);
 
@@ -151,26 +162,30 @@ export default function App() {
   }, [currentPage, selectedServiceId]);
 
   const handleNavigate = (page, id = null) => {
+    let path = '/';
     if (page === 'service-detail' && id) {
-      window.location.hash = `#/services/${id}`;
+      path = `/services/${id}`;
     } else if (page === 'project-detail' && id) {
-      window.location.hash = `#/projects/${id}`;
+      path = `/projects/${id}`;
     } else if (page === 'services') {
-      window.location.hash = `#/services`;
+      path = `/services`;
     } else if (page === 'contact') {
-      window.location.hash = `#/contact`;
+      path = `/contact`;
     } else if (page === 'about') {
-      window.location.hash = `#/about`;
+      path = `/about`;
     } else if (page === 'ceo-story') {
-      window.location.hash = `#/ceo-story`;
+      path = `/ceo-story`;
     } else if (page === 'terms') {
-      window.location.hash = `#/terms`;
+      path = `/terms`;
     } else if (page === 'privacy') {
-      window.location.hash = `#/privacy`;
+      path = `/privacy`;
     } else if (page === 'careers') {
-      window.location.hash = `#/careers`;
-    } else {
-      window.location.hash = `#/`;
+      path = `/careers`;
+    }
+
+    if (window.location.pathname !== path) {
+      window.history.pushState(null, '', path);
+      handlePathChange();
     }
   };
 
@@ -234,7 +249,7 @@ export default function App() {
       <ScrollButton />
       
       {/* Footer */}
-      <Footer />
+      <Footer onNavigate={handleNavigate} />
     </div>
   );
 }

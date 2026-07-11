@@ -20,7 +20,7 @@ export default function CTA() {
             <a href="https://wa.me/916289171798" target="_blank" rel="noreferrer" className="neo-btn neo-btn-dark-pill" style={{ fontSize: '1.1rem' }}>
               Book Free Consultation <ArrowRight size={18} />
             </a>
-            <a href="#/contact" className="neo-btn" style={{
+            <a href="/contact" className="neo-btn" style={{
               fontSize: '1.1rem',
               backgroundColor: 'transparent',
               color: 'var(--white)',

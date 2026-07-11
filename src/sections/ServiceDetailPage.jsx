@@ -113,7 +113,7 @@ export default function ServiceDetailPage({ serviceId, onBackToHome, onBackToSer
                 <p style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--white)' }}>{detail.pricing_model || 'Custom Pricing'}</p>
               </div>
               <a 
-                href="#/contact" 
+                href="/contact" 
                 className="neo-btn neo-btn-dark-pill"
                 style={{ marginTop: '8px' }}
               >

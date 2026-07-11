@@ -183,7 +183,7 @@ export default function Projects({ onSelectProject }) {
         )}
         
         <div className="reveal-on-scroll reveal-up" style={{ display: 'flex', justifyContent: 'center', marginTop: '60px' }}>
-          <a href="#/projects" className="neo-btn neo-btn-pink" style={{ padding: '16px 32px', fontSize: '1.2rem', display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <a href="/projects" className="neo-btn neo-btn-pink" style={{ padding: '16px 32px', fontSize: '1.2rem', display: 'flex', gap: '12px', alignItems: 'center' }}>
             View All Projects <ArrowRight size={20} />
           </a>
         </div>

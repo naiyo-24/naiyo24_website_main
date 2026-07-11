@@ -39,15 +39,26 @@ export default function Navbar({ currentPage, onNavigate }) {
     // Normalize links
     const sectionId = target === 'aboutus' ? 'about' : (target === 'naiyohub' ? 'hub' : (target === 'home' ? 'home' : target));
     
+    const scrollToSection = () => {
+      if (sectionId === 'home') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    };
+
     if (currentPage !== 'home') {
       e.preventDefault();
       onNavigate('home');
       setTimeout(() => {
-        window.location.hash = sectionId === 'home' ? '#' : `#${sectionId}`;
+        scrollToSection();
       }, 150);
     } else {
       e.preventDefault();
-      window.location.hash = sectionId === 'home' ? '#' : `#${sectionId}`;
+      scrollToSection();
     }
     setMobileMenuOpen(false);
   };
@@ -94,7 +105,7 @@ export default function Navbar({ currentPage, onNavigate }) {
                               : item === 'Testimonials' ? 'testimonials'
                               : 'home';
                 const isActive = activeSection === itemKey;
-                const href = item === 'Services' ? '#services' : (item === 'About Us' ? '#/about' : (item === 'Contact' ? '#/contact' : `#${itemKey}`));
+                const href = `#${itemKey}`;
                 return (
                   <li key={item}>
                     <a 
@@ -170,7 +181,7 @@ export default function Navbar({ currentPage, onNavigate }) {
                             : item === 'Testimonials' ? 'testimonials'
                             : 'home';
               const isActive = activeSection === itemKey;
-              const href = item === 'Services' ? '#services' : (item === 'About Us' ? '#/about' : (item === 'Contact' ? '#/contact' : `#${itemKey}`));
+              const href = `#${itemKey}`;
               return (
                 <a 
                   key={item} 

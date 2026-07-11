@@ -130,7 +130,7 @@ export default function ServicesPage({ onBackToHome, onSelectService }) {
             We collaborate with stakeholders to customize architectures, processes, and systems tailored to your exact business specifications.
           </p>
           <a
-            href="#/contact"
+            href="/contact"
             className="neo-btn neo-btn-dark-pill"
           >
             Start a Conversation <Star size={16} fill="var(--white)" />

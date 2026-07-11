@@ -134,7 +134,7 @@ export default function AboutPage({ onBackToHome }) {
               </div>
 
               <a
-                href="#/ceo-story"
+                href="/ceo-story"
                 className="neo-btn neo-btn-purple"
                 style={{ alignSelf: 'flex-start', padding: '10px 20px', fontSize: '0.95rem' }}
               >
@@ -222,7 +222,7 @@ export default function AboutPage({ onBackToHome }) {
           <p style={{ fontSize: '1.1rem', maxWidth: '650px', fontWeight: '500', color: '#555' }}>
             We've engineered enterprise systems, custom APIs, high-performance web applications, and stunning brand assets.
           </p>
-          <a href="#/projects" className="neo-btn neo-btn-inverted" style={{ padding: '12px 32px', fontSize: '1.1rem', marginTop: '16px', borderRadius: '50px' }}>
+          <a href="/projects" className="neo-btn neo-btn-inverted" style={{ padding: '12px 32px', fontSize: '1.1rem', marginTop: '16px', borderRadius: '50px' }}>
             View Full Service Catalog <Rocket size={20} />
           </a>
         </div>

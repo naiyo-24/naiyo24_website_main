@@ -41,7 +41,7 @@ export default function AboutSection() {
             </div>
 
             <a 
-              href="#/about" 
+              href="/about" 
               className="neo-btn neo-btn-pink"
               style={{ alignSelf: 'flex-start', padding: '10px 24px', fontSize: '0.95rem', marginTop: '8px' }}
             >
@@ -82,7 +82,7 @@ export default function AboutSection() {
               </div>
 
               <a 
-                href="#/ceo-story" 
+                href="/ceo-story" 
                 className="neo-btn neo-btn-purple"
                 style={{ padding: '8px 16px', fontSize: '0.85rem', alignSelf: 'flex-start' }}
               >

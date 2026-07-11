@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Send, Linkedin, Instagram, Facebook, Youtube, Github } from 'lucide-react';
 
-export default function Footer() {
+export default function Footer({ onNavigate }) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
@@ -34,6 +34,36 @@ export default function Footer() {
     }
   };
 
+  const handleLinkClick = (e, target) => {
+    e.preventDefault();
+    if (target === 'careers' || target === 'terms' || target === 'privacy') {
+      if (onNavigate) onNavigate(target);
+    } else {
+      const sectionMap = {
+        'aboutus': 'about',
+        'portfolio': 'projects',
+        'webdev': 'services',
+        'mobileapps': 'services',
+        'ui/uxdesign': 'services',
+        'aiautomation': 'services',
+        'cloudinfra': 'services'
+      };
+      const sectionId = sectionMap[target] || target;
+      
+      if (onNavigate) onNavigate('home');
+      setTimeout(() => {
+        if (sectionId === 'home') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          const element = document.getElementById(sectionId);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      }, 150);
+    }
+  };
+
   return (
     <footer style={{ padding: '80px 0 40px 0', borderTop: '4px solid var(--border)', backgroundColor: 'var(--bg-card)' }}>
       <div className="container">
@@ -61,25 +91,32 @@ export default function Footer() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <h4 style={{ fontSize: '1.1rem', textTransform: 'uppercase' }}>Company</h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {['Home', 'About Us', 'Portfolio', 'Contact'].map((link) => (
-                <li key={link}>
-                  <a href={`#${link.toLowerCase().replace(' ', '')}`} className="footer-link">
-                    {link}
-                  </a>
-                </li>
-              ))}
+              {['Home', 'About Us', 'Portfolio', 'Contact'].map((link) => {
+                const target = link.toLowerCase().replace(' ', '');
+                return (
+                  <li key={link}>
+                    <a 
+                      href={`#${target === 'aboutus' ? 'about' : (target === 'portfolio' ? 'projects' : target)}`} 
+                      onClick={(e) => handleLinkClick(e, target)} 
+                      className="footer-link"
+                    >
+                      {link}
+                    </a>
+                  </li>
+                );
+              })}
               <li>
-                <a href="#/careers" className="footer-link">
+                <a href="/careers" onClick={(e) => handleLinkClick(e, 'careers')} className="footer-link">
                   Careers
                 </a>
               </li>
               <li>
-                <a href="#/terms" className="footer-link">
+                <a href="/terms" onClick={(e) => handleLinkClick(e, 'terms')} className="footer-link">
                   Terms & Conditions
                 </a>
               </li>
               <li>
-                <a href="#/privacy" className="footer-link">
+                <a href="/privacy" onClick={(e) => handleLinkClick(e, 'privacy')} className="footer-link">
                   Privacy Policy
                 </a>
               </li>
@@ -90,13 +127,20 @@ export default function Footer() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <h4 style={{ fontSize: '1.1rem', textTransform: 'uppercase' }}>Services</h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {['Web Dev', 'Mobile Apps', 'UI/UX Design', 'AI automation', 'Cloud infra'].map((link) => (
-                <li key={link}>
-                  <a href="#services" className="footer-link">
-                    {link}
-                  </a>
-                </li>
-              ))}
+              {['Web Dev', 'Mobile Apps', 'UI/UX Design', 'AI automation', 'Cloud infra'].map((link) => {
+                const target = link.toLowerCase().replace(' ', '').replace('/', '');
+                return (
+                  <li key={link}>
+                    <a 
+                      href="#services" 
+                      onClick={(e) => handleLinkClick(e, target)} 
+                      className="footer-link"
+                    >
+                      {link}
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
