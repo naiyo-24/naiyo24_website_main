@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  ArrowLeft, Globe, Smartphone, Server, Database, Cloud, 
-  Palette, Monitor, CheckCircle, Calendar, ShieldCheck, HelpCircle, Star, ArrowRight, Sparkles 
+import {
+  ArrowLeft, Globe, Smartphone, Server, Database, Cloud,
+  Palette, Monitor, CheckCircle, Calendar, ShieldCheck, HelpCircle, Star, ArrowRight, Sparkles
 } from 'lucide-react';
 
 export default function ServiceDetailPage({ serviceId, onBackToHome, onBackToServices }) {
@@ -16,7 +16,7 @@ export default function ServiceDetailPage({ serviceId, onBackToHome, onBackToSer
 
   const fetchServiceDetail = async () => {
     try {
-      const response = await fetch(`http://192.168.0.159:8000/services/${serviceId}`);
+      const response = await fetch(`https://backend.naiyo24.com/services/${serviceId}`);
       if (response.ok) {
         const data = await response.json();
         setDetail(data);
@@ -57,7 +57,7 @@ export default function ServiceDetailPage({ serviceId, onBackToHome, onBackToSer
   return (
     <div style={{ padding: '120px 0 80px 0', minHeight: '100vh' }}>
       <div className="container">
-        
+
         {/* Navigation Breadcrumbs */}
         <div style={{ display: 'flex', gap: '16px', marginBottom: '40px', flexWrap: 'wrap' }}>
           <button onClick={onBackToHome} className="neo-btn" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
@@ -69,12 +69,12 @@ export default function ServiceDetailPage({ serviceId, onBackToHome, onBackToSer
         </div>
 
         {/* Hero Banner Grid */}
-        <div className="neo-card reveal-on-scroll reveal-up" style={{ 
+        <div className="neo-card reveal-on-scroll reveal-up" style={{
           backgroundColor: 'var(--bg-card)', padding: '48px', marginBottom: '48px',
           boxShadow: '10px 10px 0px var(--border)'
         }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px', alignItems: 'center' }}>
-            
+
             {/* Left Content */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div className="neo-border-thick" style={{
@@ -82,7 +82,7 @@ export default function ServiceDetailPage({ serviceId, onBackToHome, onBackToSer
                 display: 'flex', alignItems: 'center', justifyContent: 'center'
               }}>
                 {detail.icon_url ? (
-                  <img src={detail.icon_url.startsWith('http') ? detail.icon_url : `http://192.168.0.159:8000/${detail.icon_url.startsWith('/') ? detail.icon_url.slice(1) : detail.icon_url}`} alt={detail.name} style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
+                  <img src={detail.icon_url.startsWith('http') ? detail.icon_url : `https://backend.naiyo24.com/${detail.icon_url.startsWith('/') ? detail.icon_url.slice(1) : detail.icon_url}`} alt={detail.name} style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
                 ) : (
                   <Sparkles size={40} color="var(--white)" />
                 )}
@@ -99,7 +99,7 @@ export default function ServiceDetailPage({ serviceId, onBackToHome, onBackToSer
             </div>
 
             {/* Right Information Box */}
-            <div className="neo-border-thick" style={{ 
+            <div className="neo-border-thick" style={{
               padding: '32px', borderRadius: '16px', backgroundColor: 'var(--black)', color: 'var(--white)',
               display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: '6px 6px 0px var(--border)'
             }}>
@@ -112,8 +112,8 @@ export default function ServiceDetailPage({ serviceId, onBackToHome, onBackToSer
                 <span style={{ fontSize: '0.8rem', fontWeight: '800', textTransform: 'uppercase', color: '#AAAAAA' }}>Pricing Model</span>
                 <p style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--white)' }}>{detail.pricing_model || 'Custom Pricing'}</p>
               </div>
-              <a 
-                href="#/contact" 
+              <a
+                href="#/contact"
                 className="neo-btn neo-btn-dark-pill"
                 style={{ marginTop: '8px' }}
               >
@@ -126,7 +126,7 @@ export default function ServiceDetailPage({ serviceId, onBackToHome, onBackToSer
 
         {/* Double Column details */}
         <div className="grid-2" style={{ marginBottom: '60px', alignItems: 'stretch' }}>
-          
+
           {/* Key Deliverables & Features */}
           <div className="neo-card reveal-on-scroll reveal-left" style={{ padding: '36px', backgroundColor: 'var(--bg-card)' }}>
             <h2 style={{ fontSize: '1.8rem', marginBottom: '24px', letterSpacing: '-0.5px' }}>Key Capabilities</h2>

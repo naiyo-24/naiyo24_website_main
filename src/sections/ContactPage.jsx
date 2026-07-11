@@ -104,7 +104,7 @@ export default function ContactPage({ onBackToHome }) {
     setSubmitted(true);
 
     try {
-      const response = await fetch('http://192.168.0.159:8000/query', {
+      const response = await fetch('https://backend.naiyo24.com/query', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

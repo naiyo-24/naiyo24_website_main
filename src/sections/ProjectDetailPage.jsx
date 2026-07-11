@@ -28,7 +28,7 @@ export default function ProjectDetailPage({ projectId, onNavigate }) {
             const isMobile = img.height > img.width;
             setImageAspects(prev => ({ ...prev, [fileSrc]: isMobile ? 'mobile' : 'pc' }));
           };
-          img.src = `http://192.168.0.159:8000${fileSrc}`;
+          img.src = `https://backend.naiyo24.com${fileSrc}`;
         }
       });
     } catch (e) {
@@ -38,7 +38,7 @@ export default function ProjectDetailPage({ projectId, onNavigate }) {
 
   const fetchProject = async () => {
     try {
-      const response = await fetch(`http://192.168.0.159:8000/projects/${projectId}`);
+      const response = await fetch(`https://backend.naiyo24.com/projects/${projectId}`);
       if (response.ok) {
         const data = await response.json();
         setProject(data);
@@ -218,7 +218,7 @@ export default function ProjectDetailPage({ projectId, onNavigate }) {
               {videos.map((fileSrc, idx) => (
                 <div key={`vid-${idx}`} className="neo-card reveal-on-scroll reveal-up" style={{ padding: '0', overflow: 'hidden', border: 'var(--border-thick) solid var(--black)', borderRadius: 'var(--radius-xl)', width: '100%' }}>
                   <video
-                    src={`http://192.168.0.159:8000${fileSrc}`}
+                    src={`https://backend.naiyo24.com${fileSrc}`}
                     controls
                     muted
                     onVolumeChange={(e) => { e.target.muted = true; }}
@@ -236,7 +236,7 @@ export default function ProjectDetailPage({ projectId, onNavigate }) {
                 {pcScreens.map((fileSrc, idx) => (
                   <div key={`pc-${idx}`} className="neo-card reveal-on-scroll reveal-up" style={{ padding: '0', overflow: 'hidden', border: 'var(--border-thick) solid var(--black)', borderRadius: 'var(--radius-xl)' }}>
                     <img
-                      src={`http://192.168.0.159:8000${fileSrc}`}
+                      src={`https://backend.naiyo24.com${fileSrc}`}
                       alt={`${project.title} Desktop ${idx + 1}`}
                       style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }}
                     />
@@ -253,7 +253,7 @@ export default function ProjectDetailPage({ projectId, onNavigate }) {
                 {mobileScreens.map((fileSrc, idx) => (
                   <div key={`mob-${idx}`} className="neo-card reveal-on-scroll reveal-up" style={{ padding: '0', overflow: 'hidden', border: 'var(--border-thick) solid var(--black)', borderRadius: 'var(--radius-xl)', aspectRatio: '9/19' }}>
                     <img
-                      src={`http://192.168.0.159:8000${fileSrc}`}
+                      src={`https://backend.naiyo24.com${fileSrc}`}
                       alt={`${project.title} Mobile ${idx + 1}`}
                       style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }}
                     />
