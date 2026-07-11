@@ -22,35 +22,35 @@ export default function Trust() {
         <p style={{ textAlign: 'center', fontFamily: 'var(--font-heading)', fontWeight: '800', fontSize: '0.9rem', textTransform: 'uppercase', marginBottom: '20px', letterSpacing: '1px', color: '#666' }}>
           Trusted by innovative businesses worldwide
         </p>
-        
+
         <div className="marquee-container">
           <div className="marquee-content">
             {duplicatedLogos.map((logo, idx) => (
-              <img 
+              <img
                 key={`logo-1-${idx}`}
-                src={logo} 
-                alt="Client Logo" 
-                style={{ 
-                  height: '60px', 
-                  objectFit: 'contain', 
-                  mixBlendMode: 'multiply', 
+                src={logo}
+                alt="Client Logo"
+                style={{
+                  height: '60px',
+                  objectFit: 'contain',
+                  mixBlendMode: 'multiply',
                   opacity: 1
-                }} 
+                }}
               />
             ))}
           </div>
           <div className="marquee-content">
             {duplicatedLogos.map((logo, idx) => (
-              <img 
+              <img
                 key={`logo-2-${idx}`}
-                src={logo} 
-                alt="Client Logo Copy" 
-                style={{ 
-                  height: '60px', 
-                  objectFit: 'contain', 
-                  mixBlendMode: 'multiply', 
+                src={logo}
+                alt="Client Logo Copy"
+                style={{
+                  height: '60px',
+                  objectFit: 'contain',
+                  mixBlendMode: 'multiply',
                   opacity: 1
-                }} 
+                }}
               />
             ))}
           </div>
