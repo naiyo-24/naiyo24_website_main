@@ -4,12 +4,73 @@ import { ExternalLink, ArrowLeft, ArrowRight } from 'lucide-react';
 export default function ProjectsPage({ onNavigate }) {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [previews, setPreviews] = useState({});
 
   // Ensure the page always starts at the top
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchProjects();
   }, []);
+
+  useEffect(() => {
+    projects.forEach(project => {
+      if (project.image_url) {
+        setPreviews(prev => ({ ...prev, [project.id]: { url: project.image_url, isVideo: false } }));
+        return;
+      }
+      if (!project.gallery_json) return;
+      try {
+        const gallery = JSON.parse(project.gallery_json);
+        if (gallery && gallery.length > 0) {
+          const images = gallery.filter(fileSrc => {
+            return !['.mp4', '.webm', '.ogg', '.mov', '.quicktime'].some(ext =>
+              fileSrc.toLowerCase().endsWith(ext)
+            );
+          });
+          
+          if (images.length === 0) {
+            setPreviews(prev => ({ ...prev, [project.id]: { url: `http://192.168.0.159:8000${gallery[0]}`, isVideo: true } }));
+            return;
+          }
+
+          let foundLandscape = false;
+          let loadedCount = 0;
+
+          images.forEach((fileSrc) => {
+            const img = new Image();
+            img.onload = () => {
+              loadedCount++;
+              if (img.width > img.height && !foundLandscape) {
+                foundLandscape = true;
+                setPreviews(prev => ({
+                  ...prev,
+                  [project.id]: { url: `http://192.168.0.159:8000${fileSrc}`, isVideo: false }
+                }));
+              }
+              if (loadedCount === images.length && !foundLandscape) {
+                setPreviews(prev => ({
+                  ...prev,
+                  [project.id]: { url: `http://192.168.0.159:8000${images[0]}`, isVideo: false }
+                }));
+              }
+            };
+            img.onerror = () => {
+              loadedCount++;
+              if (loadedCount === images.length && !foundLandscape) {
+                setPreviews(prev => ({
+                  ...prev,
+                  [project.id]: { url: `http://192.168.0.159:8000${images[0]}`, isVideo: false }
+                }));
+              }
+            };
+            img.src = `http://192.168.0.159:8000${fileSrc}`;
+          });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    });
+  }, [projects]);
 
   const fetchProjects = async () => {
     try {
@@ -85,6 +146,9 @@ export default function ProjectsPage({ onNavigate }) {
                 </div>
               );
 
+              const previewUrl = previews[project.id]?.url || '';
+              const isVideoPreview = previews[project.id]?.isVideo || false;
+
               const imageContent = (
                 <div className="neo-border-thick" style={{
                   backgroundColor: 'var(--white)', overflow: 'hidden', borderRadius: 'var(--radius-lg)',
@@ -96,8 +160,12 @@ export default function ProjectsPage({ onNavigate }) {
                     <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#27C93F', border: '2px solid var(--black)' }}></div>
                   </div>
                   <div style={{ backgroundColor: 'var(--white)', padding: 0 }}>
-                    {project.image_url ? (
-                      <img src={project.image_url} alt={project.title} style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }} />
+                    {previewUrl ? (
+                      isVideoPreview ? (
+                        <video src={previewUrl} muted playsInline autoPlay loop style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }} />
+                      ) : (
+                        <img src={previewUrl} alt={project.title} style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }} />
+                      )
                     ) : (
                       <div style={{ width: '100%', height: '300px', backgroundColor: '#EEE', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         No Image Provided

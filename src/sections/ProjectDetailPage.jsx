@@ -6,11 +6,35 @@ export default function ProjectDetailPage({ projectId, onNavigate }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
+  const [imageAspects, setImageAspects] = useState({});
+
   // Ensure the page always starts at the top
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchProject();
   }, [projectId]);
+
+  useEffect(() => {
+    if (!project || !project.gallery_json) return;
+    try {
+      const galleryList = JSON.parse(project.gallery_json);
+      galleryList.forEach((fileSrc) => {
+        const isVid = ['.mp4', '.webm', '.ogg', '.mov', '.quicktime'].some(ext =>
+          fileSrc.toLowerCase().endsWith(ext)
+        );
+        if (!isVid) {
+          const img = new Image();
+          img.onload = () => {
+            const isMobile = img.height > img.width;
+            setImageAspects(prev => ({ ...prev, [fileSrc]: isMobile ? 'mobile' : 'pc' }));
+          };
+          img.src = `http://192.168.0.159:8000${fileSrc}`;
+        }
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }, [project]);
 
   const fetchProject = async () => {
     try {
@@ -56,19 +80,41 @@ export default function ProjectDetailPage({ projectId, onNavigate }) {
   let techStack = [];
   try {
     if (project.technologies_json) techStack = JSON.parse(project.technologies_json);
-  } catch(e) {}
+  } catch (e) { }
 
   let gallery = [];
   try {
     if (project.gallery_json) gallery = JSON.parse(project.gallery_json);
-  } catch(e) {}
+  } catch (e) { }
+
+  const videos = [];
+  const pcScreens = [];
+  const mobileScreens = [];
+
+  gallery.forEach(fileSrc => {
+    const isVid = ['.mp4', '.webm', '.ogg', '.mov', '.quicktime'].some(ext =>
+      fileSrc.toLowerCase().endsWith(ext)
+    );
+    if (isVid) {
+      videos.push(fileSrc);
+    } else {
+      const lower = fileSrc.toLowerCase();
+      const isMobileName = lower.includes('mobile') || lower.includes('phone') || lower.includes('portrait') || lower.includes('ios') || lower.includes('android');
+      const aspect = imageAspects[fileSrc];
+      if (aspect === 'mobile' || (aspect === undefined && isMobileName)) {
+        mobileScreens.push(fileSrc);
+      } else {
+        pcScreens.push(fileSrc);
+      }
+    }
+  });
 
   const servicesUsed = project.services_used ? project.services_used.split(',').map(s => s.trim()) : [];
 
   return (
     <div style={{ padding: '120px 0 80px 0', minHeight: '100vh', backgroundColor: 'var(--bg-primary)' }}>
       <div className="container">
-        
+
         {/* Navigation Breadcrumbs */}
         <div style={{ display: 'flex', gap: '16px', marginBottom: '40px', flexWrap: 'wrap' }}>
           <button onClick={() => onNavigate('home')} className="neo-btn" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
@@ -80,17 +126,18 @@ export default function ProjectDetailPage({ projectId, onNavigate }) {
         </div>
 
         {/* Hero Section */}
-        <div className="neo-card reveal-on-scroll reveal-up" style={{ 
+        <div className="neo-card reveal-on-scroll reveal-up" style={{
           backgroundColor: 'var(--black)', color: 'var(--white)', padding: '60px 48px', marginBottom: '60px',
-          display: 'flex', flexDirection: 'column', gap: '24px'
+          display: 'flex', flexDirection: 'column', gap: '24px',
+          border: 'var(--border-thick) solid var(--white)'
         }}>
-          <h1 style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', letterSpacing: '-2px', textTransform: 'uppercase', lineHeight: 1 }}>
+          <h1 style={{ color: 'var(--white)', fontSize: 'clamp(2.5rem, 5vw, 4rem)', letterSpacing: '-2px', textTransform: 'uppercase', lineHeight: 1 }}>
             {project.title}
           </h1>
           <p style={{ fontSize: '1.2rem', color: '#DDDDDD', maxWidth: '800px', lineHeight: 1.6 }}>
             {project.description}
           </p>
-          
+
           {project.link && (
             <div style={{ marginTop: '16px' }}>
               <a href={project.link} target="_blank" rel="noreferrer" className="neo-btn neo-btn-pink" style={{ display: 'inline-flex', padding: '12px 24px', fontSize: '1.1rem' }}>
@@ -126,7 +173,7 @@ export default function ProjectDetailPage({ projectId, onNavigate }) {
 
         {/* Main Content Area */}
         <div className="grid-2" style={{ gap: '48px', alignItems: 'flex-start' }}>
-          
+
           <div className="neo-card reveal-on-scroll reveal-left" style={{ padding: '40px', backgroundColor: 'var(--white)' }}>
             <h3 style={{ fontSize: '2rem', textTransform: 'uppercase', marginBottom: '24px' }}>The Challenge</h3>
             <p style={{ fontSize: '1.1rem', color: '#333', lineHeight: 1.8 }}>
@@ -143,13 +190,13 @@ export default function ProjectDetailPage({ projectId, onNavigate }) {
 
         </div>
 
-        
+
         {/* Product Gallery */}
         <div style={{ marginTop: '80px' }}>
           {(project.image_url || gallery.length > 0) && (
             <h3 style={{ fontSize: '2.5rem', textTransform: 'uppercase', marginBottom: '24px' }}>Product Gallery</h3>
           )}
-          
+
           {project.image_url && (
             <div className="neo-border-thick reveal-on-scroll reveal-up" style={{
               backgroundColor: 'var(--white)', overflow: 'hidden', borderRadius: 'var(--radius-xl)',
@@ -166,13 +213,53 @@ export default function ProjectDetailPage({ projectId, onNavigate }) {
             </div>
           )}
 
-          {gallery.length > 0 && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', marginTop: '48px' }}>
-              {gallery.map((imgSrc, idx) => (
-                <div key={idx} className="neo-card reveal-on-scroll reveal-up" style={{ padding: '0', overflow: 'hidden', border: 'var(--border-thick) solid var(--black)', borderRadius: 'var(--radius-xl)' }}>
-                  <img src={`http://192.168.0.159:8000${imgSrc}`} alt={`${project.title} Screen ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          {videos.length > 0 && (
+            <div style={{ marginTop: '32px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+              {videos.map((fileSrc, idx) => (
+                <div key={`vid-${idx}`} className="neo-card reveal-on-scroll reveal-up" style={{ padding: '0', overflow: 'hidden', border: 'var(--border-thick) solid var(--black)', borderRadius: 'var(--radius-xl)', width: '100%' }}>
+                  <video
+                    src={`http://192.168.0.159:8000${fileSrc}`}
+                    controls
+                    muted
+                    onVolumeChange={(e) => { e.target.muted = true; }}
+                    style={{ width: '100%', height: 'auto', display: 'block' }}
+                  />
                 </div>
               ))}
+            </div>
+          )}
+
+          {pcScreens.length > 0 && (
+            <div style={{ marginTop: '48px' }}>
+              <h4 style={{ fontSize: '1.5rem', textTransform: 'uppercase', marginBottom: '16px' }}>Desktop Views</h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '24px' }}>
+                {pcScreens.map((fileSrc, idx) => (
+                  <div key={`pc-${idx}`} className="neo-card reveal-on-scroll reveal-up" style={{ padding: '0', overflow: 'hidden', border: 'var(--border-thick) solid var(--black)', borderRadius: 'var(--radius-xl)' }}>
+                    <img
+                      src={`http://192.168.0.159:8000${fileSrc}`}
+                      alt={`${project.title} Desktop ${idx + 1}`}
+                      style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {mobileScreens.length > 0 && (
+            <div style={{ marginTop: '48px' }}>
+              <h4 style={{ fontSize: '1.5rem', textTransform: 'uppercase', marginBottom: '16px' }}>Mobile Views</h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '24px', maxWidth: '100%' }}>
+                {mobileScreens.map((fileSrc, idx) => (
+                  <div key={`mob-${idx}`} className="neo-card reveal-on-scroll reveal-up" style={{ padding: '0', overflow: 'hidden', border: 'var(--border-thick) solid var(--black)', borderRadius: 'var(--radius-xl)', aspectRatio: '9/19' }}>
+                    <img
+                      src={`http://192.168.0.159:8000${fileSrc}`}
+                      alt={`${project.title} Mobile ${idx + 1}`}
+                      style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
