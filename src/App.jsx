@@ -149,15 +149,45 @@ export default function App() {
       });
     }, observerOptions);
 
-    // Timeout allows the DOM to render before selecting elements
-    const timer = setTimeout(() => {
+    const observeElements = () => {
       const revealElements = document.querySelectorAll('.reveal-on-scroll');
-      revealElements.forEach((el) => observer.observe(el));
-    }, 100);
+      revealElements.forEach((el) => {
+        if (!el.classList.contains('revealed')) {
+          observer.observe(el);
+        }
+      });
+    };
+
+    // Initial observation
+    observeElements();
+
+    // Setup MutationObserver to watch for dynamically added elements (e.g. loaded from APIs)
+    const mutationObserver = new MutationObserver((mutations) => {
+      let shouldReobserve = false;
+      for (const mutation of mutations) {
+        for (const node of mutation.addedNodes) {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            if (node.classList.contains('reveal-on-scroll') || node.querySelector('.reveal-on-scroll')) {
+              shouldReobserve = true;
+              break;
+            }
+          }
+        }
+        if (shouldReobserve) break;
+      }
+      if (shouldReobserve) {
+        observeElements();
+      }
+    });
+
+    mutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
 
     return () => {
-      clearTimeout(timer);
       observer.disconnect();
+      mutationObserver.disconnect();
     };
   }, [currentPage, selectedServiceId]);
 
