@@ -161,23 +161,9 @@ export default function App() {
     // Initial observation
     observeElements();
 
-    // Setup MutationObserver to watch for dynamically added elements (e.g. loaded from APIs)
-    const mutationObserver = new MutationObserver((mutations) => {
-      let shouldReobserve = false;
-      for (const mutation of mutations) {
-        for (const node of mutation.addedNodes) {
-          if (node.nodeType === Node.ELEMENT_NODE) {
-            if (node.classList.contains('reveal-on-scroll') || node.querySelector('.reveal-on-scroll')) {
-              shouldReobserve = true;
-              break;
-            }
-          }
-        }
-        if (shouldReobserve) break;
-      }
-      if (shouldReobserve) {
-        observeElements();
-      }
+    // Setup MutationObserver to watch for any DOM updates (API loaded items, state changes, etc.)
+    const mutationObserver = new MutationObserver(() => {
+      observeElements();
     });
 
     mutationObserver.observe(document.body, {
@@ -185,9 +171,15 @@ export default function App() {
       subtree: true,
     });
 
+    // Fallback timeouts to guarantee re-observation after dynamic API responses load
+    const timeouts = [100, 300, 800, 1500, 3000].map((delay) => 
+      setTimeout(observeElements, delay)
+    );
+
     return () => {
       observer.disconnect();
       mutationObserver.disconnect();
+      timeouts.forEach(clearTimeout);
     };
   }, [currentPage, selectedServiceId]);
 
