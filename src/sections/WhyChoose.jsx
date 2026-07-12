@@ -43,7 +43,7 @@ export default function WhyChoose() {
           <div className="reveal-on-scroll reveal-right delay-200" style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
             <h2 style={{ fontSize: '3.5rem', letterSpacing: '-2px', textTransform: 'uppercase', color: 'var(--heading)' }}>Why Work With Us?</h2>
             
-            <div className="grid-2" style={{ gap: '24px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px' }}>
               
               <div className="neo-border-thick hover-brutalist-card reveal-on-scroll reveal-up delay-100" style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '24px', backgroundColor: 'var(--white)', borderRadius: '16px', cursor: 'pointer' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>

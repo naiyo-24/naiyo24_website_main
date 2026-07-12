@@ -120,8 +120,8 @@ export default function Naiyo24Hub() {
             </p>
           </div>
 
-          {/* 2-Column Roadmap Layout */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '40px', alignItems: 'center', justifyContent: 'center' }}>
+          {/* 2-Column Roadmap Layout Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '40px', alignItems: 'center', maxWidth: '1000px', margin: '0 auto' }}>
             
             {/* Left Column: Flowchart */}
             <div style={{ 
@@ -129,7 +129,7 @@ export default function Naiyo24Hub() {
               flexDirection: 'column', 
               alignItems: 'center', 
               gap: '16px',
-              minWidth: '250px'
+              width: '100%'
             }}>
               {steps.map((step, idx) => (
                 <React.Fragment key={step.title}>
@@ -184,7 +184,7 @@ export default function Naiyo24Hub() {
 
             {/* Right Column: Active Step Explain Panel */}
             <div className="neo-border-thick" style={{
-              flex: '1 1 400px', maxWidth: '600px',
+              width: '100%', justifySelf: 'center',
               backgroundColor: '#00E5FF', borderRadius: '16px', padding: '0', border: '4px solid var(--white)',
               boxShadow: '8px 8px 0px var(--black)', overflow: 'hidden'
             }}>
